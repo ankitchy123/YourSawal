@@ -64,7 +64,6 @@ router.get('/user/activate/:token', async (req, res) => {
         const newUser = User.create({
             firstname, lastname, email, password
         })
-
         success = true
 
         req.flash("success", "Account has been activated! Please login.")
@@ -105,25 +104,20 @@ router.post('/login', async (req, res) => {
 router.patch('/update', authUser, async (req, res) => {
     try {
         const userId = req.user.data._id;
-        const { firstname, lastname, email, gender, occupation, interests, country, about } = req.body
+        const { firstname, lastname, email, gender, occupation, interests, country, about, location, education, workExperience } = req.body
         const dob = req.body.dob
-        // const education = req.body.education
-        // const employement = req.body.employement
-        // const socialNetworks = req.body.socialNetworks
 
         let user = await User.findOneAndUpdate({ _id: userId }, {
             firstname, lastname, email,
             gender, occupation, interests,
-            dob, country, about
+            dob, country, about, education, workExperience, location,
         })
         console.log(user);
         req.flash('success', 'Details updated')
-        // return res.redirect('/viewprofile')
         return res.json({ success: true })
     } catch (error) {
         req.flash('error', 'Something went wrong')
         return res.json({ success: false })
-        // res.status(500).send("Internal server error");
     }
 })
 
@@ -156,7 +150,7 @@ router.get('/getuser/:id', async (req, res) => {
     try {
         const { id } = req.params
         const user = await User.findById(id).select("-password");
-        res.status(200).send(user)
+        res.status(200).json(user)
     } catch (error) {
         res.status(500).send("Internal server error");
     }

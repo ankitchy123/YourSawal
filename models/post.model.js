@@ -1,6 +1,9 @@
 const mongoose = require('mongoose')
 const postSchema = new mongoose.Schema({
-	author: String,			// Author id
+	author: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'users'
+	},			// Author id
 	body: String,			// Content of post
 	ref: String,			// Id of reference post if any
 	group: String,			// Group in which posted
@@ -10,6 +13,7 @@ const postSchema = new mongoose.Schema({
 	options: [String],		// List of options, When post type is `poll`
 	submissions: Map,		// Map of user and his response
 	likes: [String],		// List of user that liked this post
+	comment: [String],
 	last_update: {			// Date post last updated
 		type: Date,
 		default: Date.now,

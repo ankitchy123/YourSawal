@@ -3,10 +3,10 @@ const Group = require('../models/group.model')
 
 // Create new group with goup_name and group_icon, Required authentication
 const createGroup = async (req, res) => {
-	
+
 	// User add by authantication middleware, { uid, email }
 	const user = req.user
-	
+
 	// Take group_name and group_icon from req.body
 	const group_name = req.body.group_name
 	const group_icon = req.body.group_icon || 'group_icon.png'
@@ -19,7 +19,7 @@ const createGroup = async (req, res) => {
 	}
 
 	try {
-		
+
 		// Check if group already exist or not
 		const _group = await Group.findOne({ group_name })
 		if (_group) {
@@ -42,7 +42,7 @@ const createGroup = async (req, res) => {
 		// })
 		res.redirect("/grouphome")
 	} catch (error) {
-		
+
 		// Something went wrong with server, Use `error` as payload if required
 		res.json({
 			error: "Something went wrong."
@@ -52,7 +52,7 @@ const createGroup = async (req, res) => {
 
 // Get group info by group_name
 const getGroupInfo = async (req, res) => {
-	
+
 	// Get required fields from request
 	const { name: group_name } = req.params
 	const user_id = req.user?.uid
@@ -75,7 +75,7 @@ const getGroupInfo = async (req, res) => {
 				error: "Group not found."
 			})
 		}
-	} catch(error) {
+	} catch (error) {
 		// Something went wrong with server, Use `error` as payload if required
 		res.json({
 			error: "Something went wrong."
@@ -85,7 +85,7 @@ const getGroupInfo = async (req, res) => {
 
 // Update group info
 const updateGroup = async (req, res) => {
-	
+
 	// Get required fields from request
 	const { name: group_name } = req.params
 	const user = req.user
@@ -122,7 +122,7 @@ const updateGroup = async (req, res) => {
 				})
 			}
 		}
-	} catch(error) {
+	} catch (error) {
 		// Something went wrong with server, Use `error` as payload if required
 		res.json({
 			error: "Something went wrong."
@@ -143,9 +143,9 @@ const joinGroup = async (req, res) => {
 					error: "Admin can not leave the group."
 				})
 			} else if (group.moderators.indexOf(uid) !== -1) {
-				group.moderators = group.moderators.filter(mod=>mod!==uid)
+				group.moderators = group.moderators.filter(mod => mod !== uid)
 			} else if (group.members.indexOf(uid) !== -1) {
-				group.members = group.members.filter(user=>user!==uid)
+				group.members = group.members.filter(user => user !== uid)
 			} else {
 				group.members.push(uid)
 			}
@@ -154,7 +154,7 @@ const joinGroup = async (req, res) => {
 				error: "Group not found."
 			})
 		}
-	} catch(error) {
+	} catch (error) {
 		res.json({
 			error: "Something went wrong."
 		})
@@ -169,17 +169,17 @@ const getGroups = async (req, res) => {
 
 	try {
 		const groups = await Group.find().limit(POST_PER_PAGE)
-		res.json(groups.map(group=>({ 
+		res.json(groups.map(group => ({
 			...group._doc,
 			members: group.members.length,
 			moderators: group.moderators.length,
 			joined: uid ? (
-				group.moderators.indexOf(uid) !== -1 || 
+				group.moderators.indexOf(uid) !== -1 ||
 				group.members.indexOf(uid) !== -1 ||
-				group.admin === uid) 
-			: false
+				group.admin === uid)
+				: false
 		})))
-	} catch(error) {
+	} catch (error) {
 		res.json({
 			error: "Something went wrong."
 		})

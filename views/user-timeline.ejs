@@ -32,15 +32,11 @@
 		</div>
 	</div>
 	<div class="theme-layout">
-
-
-
 		<div class="topbar stick">
 			<div class="logo">
 				<a title="" href="#"><img height="100" src="images/logo.jpeg" alt=""></a>
 			</div>
 			<div class="top-area">
-
 				<div class="top-search">
 					<form method="post" class="">
 						<input type="text" placeholder="Search Questions, Groups etc">
@@ -145,7 +141,7 @@
 														<a class="h4 author-name" href="about.html">
 															<%=user.firstname%>
 														</a>
-														<div class="country">Bangalore, India</div>
+														<div class="country" id="location"></div>
 													</div>
 												</div>
 											</div>
@@ -168,8 +164,8 @@
 												</ul>
 												<ol class="folw-detail">
 													<li><span>Posts</span><ins>101</ins></li>
-													<li><span>Followers</span><ins>1.3K</ins></li>
-													<li><span>Following</span><ins>22</ins></li>
+													<li><span>Followers</span><ins id="followers"></ins></li>
+													<li><span>Following</span><ins id="following"></ins></li>
 												</ol>
 											</div>
 										</div>
@@ -201,21 +197,20 @@
 												<img src="images/resources/company1.png" alt="">
 											</figure>
 											<div class="newpst-input">
-												<form method="post">
-													<textarea rows="2"
-														placeholder="Share Post with the Community!"></textarea>
+												<form action="/api/post/create" method="post">
+													<textarea rows="2" placeholder="Share Post with the Community!"
+														name="body" id="body"></textarea>
+													<div class="attachments">
+														<button class="post-btn" type="submit"
+															data-ripple="">Post</button>
+													</div>
 												</form>
 											</div>
-											<div class="attachments">
-
-												<button class="post-btn" type="submit" data-ripple="">Post</button>
-											</div>
-
 										</div>
 
 									</div><!-- add post new box -->
 
-									<div class="loadMore">
+									<div class="loadMore" id="posttimeline">
 										<div class="central-meta item">
 											<div class="user-post">
 												<div class="friend-info">
@@ -521,6 +516,266 @@
 	</div>
 
 
+
+	<script>
+		const fetchdetails = async () => {
+			const response = await fetch('http://localhost:3000/api/auth/getuser', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+			});
+			const json = await response.json();
+
+			document.title = "Your Sawaal :: " + json.firstname + " " + json.lastname;
+			let location = document.getElementById('location')
+			location.innerHTML = json.location
+
+			let followers = document.getElementById('followers')
+			followers.innerHTML = json.followers.length
+			let following = document.getElementById('following')
+			following.innerHTML = json.following.length
+		}
+		fetchdetails()
+
+		const fetchPosts = async () => {
+			const response = await fetch('http://localhost:3000/api/post/getposts', {
+				method: 'GET'
+			})
+			// console.log('<%=user._id %>');
+			const json = await response.json()
+			let posttimeline = document.getElementById('posttimeline')
+			let html = '';
+
+
+			json.forEach((post) => {
+				let getUser = async () => {
+					let url = 'http://localhost:3000/api/auth/getuser/' + post.author
+					const user = await fetch(url, {
+						method: 'GET'
+					})
+					const userData = await user.json()
+					localStorage.setItem('user', JSON.stringify(userData))
+				}
+				getUser()
+
+				let userData = JSON.parse(localStorage.getItem('user'))
+
+				const createDate = new Date(post.created_on);
+				let created_on = createDate.toLocaleString('default', { month: 'short' }) + ", " + createDate.getDate() + " " + createDate.getFullYear()
+
+				if (post.author != '<%=user._id %>') {
+					html += `<div class="central-meta item">
+											<div class="user-post">
+												<div class="friend-info">
+													<figure>
+														<img src="images/resources/hobo.jpg" alt="">
+														</figure>
+														<div class="friend-name">
+															<div class="more">
+																<div class="more-post-optns"><i class="ti-more-alt"></i>
+																	<ul>
+																		<li class="bad-report"><i class="fa fa-flag"></i>Report Post</li>
+																		</ul>
+																		</div>
+																		</div>
+																		<ins><a href="timeline.html" title="">${userData.firstname} ${userData.lastname}</a></ins>
+																		<span> ${created_on}</span>
+																		</div>
+																		<div class="post-meta">
+																			<div class="description">
+															<p>${post.body}</p>
+														</div>
+														<div class="we-video-info">
+															<ul>
+																<li>
+																	<div class="likes heart" title="Like/Dislike">❤
+																		<span>${post.likes.length}</span>
+																		</div>
+																		</li>
+																		<li>
+																			<span class="comment" title="Comments">
+																		<i class="fa fa-commenting"></i>
+																		<ins>2</ins>
+																	</span>
+																</li>
+															</ul>
+														</div>
+														</div>
+														<div class="coment-area">
+															<ul class="we-comet">
+																<li>
+																	<div class="comet-avatar">
+																		<img src="images/resources/hobo.jpg" alt="">
+																		</div>
+																		<div class="we-comment">
+																			<h5><a href="timeline.html" title="">James T
+																				Kirk</a></h5>
+																				<p>It's RDJ!</p>
+																				<div class="inline-itms">
+																					<span>1 minute ago</span>
+																					<a href="#" title=""><i
+																						class="fa fa-heart"></i><span>20</span></a>
+																						</div>
+																</div>
+																</li>
+																<li>
+																	<div class="comet-avatar">
+																		<img src="images/resources/hobo.jpg" alt="">
+																		</div>
+																		<div class="we-comment">
+																			<h5><a href="timeline.html" title="">Starfleet
+																				Enterprise</a></h5>
+																				<p>My Favorite Movie! Robert Downey Jr
+																					
+																					</p>
+																					<div class="inline-itms">
+																						<span>1 hour ago</span>
+																						
+																						<a href="#" title=""><i
+																							class="fa fa-heart"></i><span>20</span></a>
+																							</div>
+																							</div>
+																							</li>
+																							
+																							<li class="post-comment">
+																								<div class="comet-avatar">
+																									<img src="images/resources/hobo.jpg" alt="">
+																									</div>
+																									<div class="post-comt-box">
+																										<form method="post">
+																											<textarea
+																											placeholder="Post your comment"></textarea>
+																											<div class="add-smiles">
+																												<div class="uploadimage">
+																													<i class="fa fa-image"></i>
+																													<label class="fileContainer">
+																					<input type="file">
+																					</label>
+																					</div>
+																					</div>
+																					<button type="submit"></button>
+																					</form>
+																					</div>
+																					</li>
+																					</ul>
+																					</div>
+																					</div>
+											</div>
+										</div>`
+				}
+				else {
+					html += `<div class="central-meta item">
+						<div class="user-post">
+							<div class="friend-info">
+								<figure>
+									<img src="images/resources/hobo.jpg" alt="">
+									</figure>
+									<div class="friend-name">
+										<div class="more">
+											<div class="more-post-optns"><i class="ti-more-alt"></i>
+												<ul>
+													<li><i class="fa fa-pencil-square-o"></i>Edit Post
+														</li>
+														<li><i class="fa fa-trash-o"></i>Delete Post</li>
+														<li class="bad-report"><i
+															class="fa fa-flag"></i>Report Post</li>
+															</ul>
+															</div>
+															</div>
+															<ins><a href="#" title="">${userData.firstname} ${userData.lastname}</a></ins>
+															<span><i class="fa fa-globe"></i> ${created_on}</span>
+															</div>
+															<div class="post-meta">
+																
+																<div class="description">
+																	<p>${post.body}</p>
+														</div>
+														<div class="we-video-info">
+															<ul>
+																<li>
+																	<div class="likes heart" title="Like/Dislike">❤
+																		<span>${post.likes.length}</span>
+																		</div>
+																		</li>
+																		<li>
+																			<span class="comment" title="Comments">
+																				<i class="fa fa-commenting"></i>
+																				<ins>2</ins>
+																				</span>
+																				</li>
+															</ul>
+														</div>
+														</div>
+														<div class="coment-area">
+														<ul class="we-comet">
+															<li>
+																<div class="comet-avatar">
+																	<img src="images/resources/hobo.jpg" alt="">
+																</div>
+																<div class="we-comment">
+																	<h5><a href="timeline.html" title="">James T
+																		Kirk</a></h5>
+																	<p>They need to be able to think on their feet and
+																		be able to work with a team to get the job done
+																		</p>
+																		<div class="inline-itms">
+																			<span>1 day ago</span>
+																			<a href="#" title=""><i
+																				class="fa fa-heart"></i><span>20</span></a>
+																				</div>
+																				</div>
+																				</li>
+																				<li>
+																<div class="comet-avatar">
+																	<img src="images/resources/hobo.jpg" alt="">
+																	</div>
+																<div class="we-comment">
+																	<h5><a href="timeline.html" title="">Starfleet
+																		Enterprise</a></h5>
+																		<p>Exploring Space is awesome.
+																			</p>
+																			<div class="inline-itms">
+																				<span>1 hour ago</span>
+
+																		<a href="#" title=""><i
+																				class="fa fa-heart"></i><span>20</span></a>
+																				</div>
+																				</div>
+																				</li>
+																				
+																				<li class="post-comment">
+																					<div class="comet-avatar">
+																						<img src="images/resources/hobo.jpg" alt="">
+																						</div>
+																<div class="post-comt-box">
+																	<form method="post">
+																		<textarea
+																			placeholder="Post your comment"></textarea>
+																			<div class="add-smiles">
+																				<div class="uploadimage">
+																				<i class="fa fa-image"></i>
+																				<label class="fileContainer">
+																					<input type="file">
+																					</label>
+																					</div>
+																					</div>
+																					<button type="submit"></button>
+																					</form>
+																					</div>
+															</li>
+															</ul>
+													</div>
+												</div>
+												</div>
+												</div>`
+				}
+			})
+			localStorage.removeItem('user')
+			posttimeline.innerHTML = html
+		}
+		fetchPosts()
+	</script>
 	<script src="js/main.min.js"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8c55_YHLvDHGACkQscgbGLtLRdxBDCfI"></script>
 	<script src="js/locationpicker.jquery.js"></script>

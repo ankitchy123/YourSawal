@@ -144,7 +144,7 @@
 														<a class="h4 author-name" href="about.html">
 															<%=user.firstname%>
 														</a>
-														<div class="country">Bangalore, India</div>
+														<div class="country" id="location"></div>
 													</div>
 												</div>
 											</div>
@@ -167,8 +167,8 @@
 												</ul>
 												<ol class="folw-detail">
 													<li><span>Posts</span><ins>101</ins></li>
-													<li><span>Followers</span><ins>1.3K</ins></li>
-													<li><span>Following</span><ins>22</ins></li>
+													<li><span>Followers</span><ins id="followers"></ins></li>
+													<li><span>Following</span><ins id="following"></ins></li>
 												</ol>
 											</div>
 										</div>
@@ -235,13 +235,13 @@
 											<div class="col-lg-6">
 												<div class="gen-metabox">
 													<span><i class="fa fa-mortar-board"></i> Education</span>
-													<p>
+													<p id="education">
 														PGDM-Finance: Symbiosis, Pune
 													</p>
 												</div>
 												<div class="gen-metabox">
 													<span><i class="fa fa-certificate"></i> Work and experience</span>
-													<p>
+													<p id="workExperience">
 														Co-Founder, Stack Nation | RadonX | TAM Ascend
 													</p>
 												</div>
@@ -260,15 +260,12 @@
 																	class="fa fa-youtube"></i></a></li>
 														<li><a class="instagram" href="#" title=""><i
 																	class="fa fa-instagram"></i></a></li>
-
 													</ul>
 												</div>
 											</div>
 
 										</div>
 									</div>
-
-
 								</div>
 							</div>
 						</div>
@@ -323,6 +320,14 @@
 			occupation.innerHTML = json.occupation
 			let interests = document.getElementById('interests')
 			interests.innerHTML = json.interests
+			let education = document.getElementById('education')
+			education.innerHTML = json.education
+			let workExperience = document.getElementById('workExperience')
+			workExperience.innerHTML = json.workExperience
+			let location = document.getElementById('location')
+			location.innerHTML = json.location
+			let about = document.getElementById('about')
+			about.innerHTML = json.about
 
 			let dob = document.getElementById('dob')
 			const dobDate = new Date(json.dob);
@@ -331,6 +336,12 @@
 			let joined = document.getElementById('joined')
 			const date = new Date(json.joined);
 			joined.innerHTML = date.toDateString()
+
+			let followers = document.getElementById('followers')
+			followers.innerHTML = json.followers.length
+
+			let following = document.getElementById('following')
+			following.innerHTML = json.following.length
 		}
 		fetchdetails()
 	</script>

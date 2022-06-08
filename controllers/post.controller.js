@@ -3,17 +3,14 @@ const Post = require('../models/post.model')
 
 // Create a new post with required fields
 const createPost = async (req, res) => {
-
 	// Get required fields from request
-	const user = req.user
+	const author = req.user.data._id
 	const body = req.body.body
 	const options = req.body.options || []
 	const type = req.body.type || 'normal'
-	const ref = req.body.ref || null
 	const external_link = req.body.external_link
 
 	const likes = []
-
 	// For later admin use
 	const is_sponsored = false
 
@@ -35,11 +32,10 @@ const createPost = async (req, res) => {
 		// Create a new post from given data and save it in the databaes, Return new post as response
 		const post = new Post({
 			body,
-			ref,
 			external_link,
 			is_sponsored,
 			likes,
-			author: user.uid,
+			author,
 			type,
 			options,
 		})
@@ -48,10 +44,9 @@ const createPost = async (req, res) => {
 			const map = new Map()
 		}
 		await post.save()
-		res.json({
-			message: "Post created successfully",
-			payload: post
-		})
+
+		req.flash("success", "Logged in successfully")
+		return res.redirect('/usertimeline')
 	} catch (error) {
 		// Something went wrong with server, Use `error` as payload if required
 		res.json({
@@ -61,11 +56,19 @@ const createPost = async (req, res) => {
 	}
 }
 
+const getPosts = async (req, res) => {
+	try {
+		const posts = await Post.find()
+		res.json(posts)
+	} catch (error) {
+		res.json({ error: "Something went wrong.", })
+	}
+}
 // Like a post from post_id, Required authentication
 const likePost = async (req, res) => {
 
 	// Get required fields from request
-	const user_id = req.user.uid
+	const user_id = req.user._id
 	const { id: post_id } = req.params
 
 	// Post id is required to like a post
@@ -298,4 +301,5 @@ module.exports = {
 	getUserPosts,
 	getLikes,
 	votePoll,
+	getPosts
 }

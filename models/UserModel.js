@@ -23,7 +23,8 @@ const userSchema = new Schema({
     },
     dob:
     {
-        type: Date
+        type: Date,
+        default: ''
     },
     gender: {
         type: String,
@@ -34,26 +35,12 @@ const userSchema = new Schema({
         default: 'None'
     },
     education: {
-        course: {
-            type: String,
-        },
-        institutionname: {
-            type: String
-        },
-        location: {
-            type: String
-        }
+        type: String,
+        default: 'None'
     },
-    employement: {
-        company: {
-            type: String,
-        },
-        role: {
-            type: String
-        },
-        experience: {
-            type: Number
-        }
+    workExperience: {
+        type: String,
+        default: 'None'
     },
     interests: {
         type: [String]
@@ -75,13 +62,34 @@ const userSchema = new Schema({
             type: String
         }
     },
-    country: String,			// User's country
-    about: String,				// User's bio
-    joined: {					// Date user joined
+    country: {
+        type: String,
+        default: ''
+    },
+    location: {
+        type: String,
+        default: ''
+    },
+    followers: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'users'
+    },
+    following: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'users'
+    },
+    about: {
+        type: String,
+        default: ''
+    },				// User's bio
+    joined: {
         type: Date,
         default: Date.now
     },
-    hobbies: String,			// User's hobbies, comma seprated
+    hobbies: {
+        type: String,
+        default: 'None'
+    },
     password:
     {
         type: String,

@@ -49,12 +49,9 @@
 					<span> Edit Profile</span>
 				</div>
 				<ul class="setting-area">
-
-
 					<li><a href="#" title="Languages" data-ripple=""><i class="fa fa-globe"></i><em>EN</em></a>
 
 					</li>
-
 				</ul>
 				<div class="user-img">
 					<h5>
@@ -145,17 +142,17 @@
 														<a class="h4 author-name" href="about.html">
 															<%=user.firstname%>
 														</a>
-														<div class="country">Bangalore, India</div>
+														<div class="country" id="location"></div>
 													</div>
 												</div>
 											</div>
 											<div class="col-lg-10 col-md-9">
 												<ul class="profile-menu">
 													<li>
-														<a class="" href="user-timeline.html">Timeline</a>
+														<a class="" href="/usertimeline">Timeline</a>
 													</li>
 													<li>
-														<a class="" href="view-profile.html">About</a>
+														<a class="" href="/viewprofile">About</a>
 													</li>
 													<li>
 														<a class="" href="user-followers.html">Followers</a>
@@ -168,8 +165,8 @@
 												</ul>
 												<ol class="folw-detail">
 													<li><span>Posts</span><ins>101</ins></li>
-													<li><span>Followers</span><ins>1.3K</ins></li>
-													<li><span>Following</span><ins>22</ins></li>
+													<li><span>Followers</span><ins id="followers"></ins></li>
+													<li><span>Following</span><ins id="following"></ins></li>
 												</ol>
 											</div>
 										</div>
@@ -200,11 +197,10 @@
 																</figure>
 																<div class="edit-img">
 																	<form class="edit-phto">
-
 																		<label class="fileContainer">
 																			<i class="fa fa-camera-retro"></i>
 																			Chage DP
-																			<input type="file">
+																			<input type="file" id="image" name="image">
 																		</label>
 																	</form>
 																</div>
@@ -261,19 +257,20 @@
 																	<label>About your profile</label>
 																	<textarea rows="3"
 																		placeholder="write someting about yourself"
-																		name="about"></textarea>
+																		name="about" id="about"></textarea>
 																</div>
 
 																<div>
 																	<label>Location</label>
 																	<input type="text"
 																		placeholder="Ex.San Francisco, CA"
-																		id="location">
+																		id="locationinp" name="location">
 																</div>
 																<div>
 																	<label>Country</label>
-																	<select name="country" id="country">
-																		<option value="country">Country</option>
+																	<select name="country">
+																		<option value="country" id="country">Country
+																		</option>
 																		<option value="Afghanistan">Afghanistan</option>
 																		<option value="Ƭand Islands">Ƭand Islands
 																		</option>
@@ -621,10 +618,23 @@
 																	</select>
 																</div>
 																<div>
+																	<label for="education">Education</label>
+																	<input type="text" name="education" id="education"
+																		placeholder="Ex. PGDM-Finance: Symbiosis, Pune">
+																</div>
+																<div>
+																	<label for="workExperience">Work &
+																		Experience</label>
+																	<input type="text" name="workExperience"
+																		id="workExperience"
+																		placeholder="Ex. Web Developer: Your Sawaal">
+																</div>
+																<div>
 																	<label>Occupation</label>
 																	<input type="text" class="form-control"
 																		name="occupation" id="occupation">
 																</div>
+
 																<div>
 																	<label>Interests</label>
 																	<select class="form-select" multiple
@@ -684,7 +694,6 @@
 			</div>
 		</section>
 
-
 		<div class="bottombar">
 			<div class="container">
 				<div class="row">
@@ -709,7 +718,7 @@
 				}
 			}
 
-			const creds = { firstname: e.target.firstname.value, lastname: e.target.lastname.value, email: e.target.email.value, gender: e.target.gender.value, occupation: e.target.occupation.value, interests: interests, dob: e.target.dob.value, country: e.target.country.value }
+			const creds = { firstname: e.target.firstname.value, lastname: e.target.lastname.value, email: e.target.email.value, gender: e.target.gender.value, occupation: e.target.occupation.value, interests: interests, dob: e.target.dob.value, country: e.target.country.value, education: e.target.education.value, about: e.target.about.value, location: e.target.location.value, workExperience: e.target.workExperience.value }
 
 			const response = await fetch('http://localhost:3000/api/auth/update', {
 				method: 'PATCH',
@@ -754,10 +763,20 @@
 			let occupation = document.getElementById('occupation')
 			occupation.value = json.occupation
 			let location = document.getElementById('location')
-			location.value = json.location
+			location.innerHTML = json.location
 
-			let interests = document.getElementById('interests')
-			interests.value = json.interests
+			let locationinp = document.getElementById('locationinp')
+			locationinp.value = json.location
+
+			let education = document.getElementById('education')
+			education.value = json.education
+			let workExperience = document.getElementById('workExperience')
+			workExperience.value = json.workExperience
+
+			let followers = document.getElementById('followers')
+			followers.innerHTML = json.followers.length
+			let following = document.getElementById('following')
+			following.innerHTML = json.following.length
 		}
 		fetchdetails()
 	</script>
