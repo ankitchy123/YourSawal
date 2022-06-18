@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const sendEmail = require('../controllers/sendMail');
 const authUser = require('../middleware/authUser');
+const { login, getUser, forgotPassword, resetPassword, reset } = require('../controllers/user.controller');
 
 const createActivationToken = (payload) => {
     return jwt.sign(payload, process.env.ACTIVATION_SECRET, { expiresIn: '5m' })
@@ -42,7 +43,7 @@ router.post('/createuser', async (req, res) => {
 
         const activation_token = createActivationToken(user)
         const url = `${process.env.CLIENT_URL}/api/auth/user/activate/${activation_token}`
-        sendEmail(email, url)
+        sendEmail(email, url, "Just click the button below to validate your email address.", "Verify email")
         success = true;
         req.flash("success", "Register Success! Please verify your email to start.")
         res.redirect('/register')
@@ -50,7 +51,6 @@ router.post('/createuser', async (req, res) => {
         res.status(500).send("Internal server error");
     }
 })
-
 
 // ROUTE 2: Verify email address using: POST "/api/auth/verification"
 router.get('/user/activate/:token', async (req, res) => {
@@ -74,45 +74,21 @@ router.get('/user/activate/:token', async (req, res) => {
 })
 
 // ROUTE 3: Authenticate a user using: POST "/api/auth/login"
-router.post('/login', async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        let user = await User.findOne({ email });
-        if (!user) {
-            req.flash('error', 'Try to login with correct credentials')
-            return res.redirect('/login')
-        }
-
-        const passwordCompare = await bcrypt.compare(password, user.password);
-        if (!passwordCompare) {
-            req.flash('error', 'Try to login with correct credentials')
-            return res.redirect('/login')
-        }
-        const token = jwt.sign({ data: user }, process.env.ACCESS_SECRET, { expiresIn: '24h' })
-
-        res.cookie("token", token, {
-            httpOnly: true
-        })
-        req.flash("success", "Logged in successfully")
-        return res.redirect('/usertimeline')
-    } catch (error) {
-        res.status(500).json({ msg: error.message });
-    }
-})
+router.post('/login', login)
 
 // Update User Details
 router.patch('/update', authUser, async (req, res) => {
     try {
         const userId = req.user.data._id;
-        const { firstname, lastname, email, gender, occupation, interests, country, about, location, education, workExperience } = req.body
+        const { firstname, lastname, email, gender, occupation, interests, country, about, location, education, workExperience, socialNetworks, hobbies } = req.body
         const dob = req.body.dob
 
         let user = await User.findOneAndUpdate({ _id: userId }, {
             firstname, lastname, email,
             gender, occupation, interests,
-            dob, country, about, education, workExperience, location,
+            dob, country, about, education, workExperience, location, socialNetworks, hobbies
         })
-        console.log(user);
+
         req.flash('success', 'Details updated')
         return res.json({ success: true })
     } catch (error) {
@@ -126,24 +102,15 @@ router.get('/logout', async (req, res) => {
     try {
         res.clearCookie("token")
         req.flash("success", "Logged out successfully.")
-        // return res.redirect('/')
+
         return res.json({ success: true })
     } catch (error) {
         return res.json({ success: false })
-        // res.status(500).send("Internal server error");
     }
 })
 
 // Fetch Logged in User Details
-router.post('/getuser', authUser, async (req, res) => {
-    try {
-        const userId = req.user.data._id;
-        const user = await User.findById(userId).select("-password");
-        res.status(200).send(user);
-    } catch (error) {
-        res.status(500).send("Internal server error");
-    }
-})
+router.post('/getuser', authUser, getUser)
 
 // Fetch User by ID
 router.get('/getuser/:id', async (req, res) => {
@@ -155,4 +122,30 @@ router.get('/getuser/:id', async (req, res) => {
         res.status(500).send("Internal server error");
     }
 })
+
+router.get('/getuser/name/:name', async (req, res) => {
+    try {
+        const { name } = req.params
+        var str = name.split(" ");
+
+        if (str[1] == null) {
+            // const user = await User.find({ firstname: str[0] }).select("-password");
+            const user = await User.find({ firstname: { $regex: '.*' + str[0] + '.*' } }).select("-password");
+            res.status(200).json(user)
+        }
+        else {
+            const user = await User.find({ firstname: { $regex: '.*' + str[0] + '.*' }, lastname: { $regex: '.*' + str[1] + '.*' } }).select("-password");
+            res.status(200).json(user)
+        }
+    } catch (error) {
+        res.status(500).send("Internal server error");
+    }
+})
+
+router.post('/forgotpassword', forgotPassword)
+
+router.get('/user/reset/:token', resetPassword)
+
+router.post('/reset', reset)
+
 module.exports = router;

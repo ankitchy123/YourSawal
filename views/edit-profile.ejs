@@ -13,7 +13,6 @@
 	<link rel="stylesheet" href="css/style.css">
 	<link rel="stylesheet" href="css/color.css">
 	<link rel="stylesheet" href="css/responsive.css">
-
 </head>
 
 <body>
@@ -32,17 +31,15 @@
 		</div>
 	</div>
 	<div class="theme-layout">
-
 		<div class="topbar stick">
 			<div class="logo">
 				<a title="" href="#"><img height="100" src="images/logo.jpeg" alt=""></a>
 			</div>
 			<div class="top-area">
-
 				<div class="top-search">
 					<form method="post" class="">
-						<input type="text" placeholder="Search Questions, Groups etc">
-						<button data-ripple><i class="ti-search"></i></button>
+						<input type="text" placeholder="Search Questions, Groups etc" id="searchinput">
+						<button data-ripple id="search" onclick="handleSearch(event)"><i class="ti-search"></i></button>
 					</form>
 				</div>
 				<div class="page-name">
@@ -54,9 +51,8 @@
 					</li>
 				</ul>
 				<div class="user-img">
-					<h5>
-						<%=user.firstname%>
-							<%=user.lastname%>
+					<h5 id="name">
+
 					</h5>
 					<img src="images/resources/company1.png" alt="">
 					<div class="user-setting">
@@ -66,7 +62,7 @@
 							<li><a class="active" href="/editprofile" title=""><i class="ti-pencil-alt"></i>edit
 									profile</a></li>
 
-							<li><a title=""><i class="ti-power-off" onclick="logOut()"></i>log out</a></li>
+							<li><a onclick="logOut()"><i class="ti-power-off"></i>Log out</a></li>
 						</ul>
 					</div>
 				</div>
@@ -115,13 +111,7 @@
 											</label>
 										</div>
 										<img src="images/resources/profile-image.jpg" alt="">
-										<ul class="profile-controls">
-											<li><a href="#" title="Follow" data-toggle="tooltip"><i
-														class="fa fa-user-plus"></i></a></li>
-											<li><a href="#" title="UnFollow" data-toggle="tooltip"><i
-														class="fa fa-star"></i></a></li>
 
-										</ul>
 									</figure>
 
 									<div class="profile-section">
@@ -139,8 +129,8 @@
 													</div>
 
 													<div class="author-content">
-														<a class="h4 author-name" href="about.html">
-															<%=user.firstname%>
+														<a class="h4 author-name" href="about.html" id="uppername">
+
 														</a>
 														<div class="country" id="location"></div>
 													</div>
@@ -177,12 +167,10 @@
 										<div class="about">
 											<div class="d-flex flex-row mt-2">
 												<ul class="nav nav-tabs nav-tabs--vertical nav-tabs--left">
-
 													<li class="nav-item">
 														<a href="#edit-profile" class="nav-link" data-toggle="tab"><i
 																class="fa fa-pencil"></i> Edit Profile</a>
 													</li>
-
 												</ul>
 												<div class="tab-content">
 													<div class="tab-pane fade show active" id="edit-profile">
@@ -211,12 +199,12 @@
 																<div>
 																	<label>First Name</label>
 																	<input type="text" placeholder="Jack"
-																		name="firstname" value="<%=user.firstname%>">
+																		name="firstname" id="firstname">
 																</div>
 																<div>
 																	<label>Last Name</label>
 																	<input type="text" placeholder="Carter"
-																		name="lastname" value="<%=user.lastname%>">
+																		name="lastname" id="lastname">
 																</div>
 																<div>
 																	<label>Email Address</label>
@@ -258,6 +246,11 @@
 																	<textarea rows="3"
 																		placeholder="write someting about yourself"
 																		name="about" id="about"></textarea>
+																</div>
+																<div>
+																	<label>Hobbies</label>
+																	<textarea rows="3" name="hobbies"
+																		id="hobbies"></textarea>
 																</div>
 
 																<div>
@@ -634,6 +627,26 @@
 																	<input type="text" class="form-control"
 																		name="occupation" id="occupation">
 																</div>
+																<div>
+																	<label>Facebook Url</label>
+																	<input type="text" class="form-control"
+																		name="facebookurk" id="facebookurl">
+																</div>
+																<div>
+																	<label>Instagram Url</label>
+																	<input type="text" class="form-control"
+																		name="instagramurl" id="instagramurl">
+																</div>
+																<div>
+																	<label>Linkedin Url</label>
+																	<input type="text" class="form-control"
+																		name="linkedinurl" id="linkedinurl">
+																</div>
+																<div>
+																	<label>Youtube Url</label>
+																	<input type="text" class="form-control"
+																		name="youtubeurl" id="youtubeurl">
+																</div>
 
 																<div>
 																	<label>Interests</label>
@@ -673,12 +686,10 @@
 															src="images/resources/channel.jpg"></a>
 												</figure>
 												<div class="page-meta">
-													<a class="underline" title="" href="/viewprofile">
-														<%=user.firstname%>
-															<%=user.lastname%>
+													<a class="underline" title="" href="/viewprofile" id="sidename">
 													</a>
-													<span><i class="ti-user"></i>Followers <em
-															class="bg-blue">9</em></span>
+													<span><i class="ti-user"></i>Followers <em class="bg-blue"
+															id="sidefollowers"></em></span>
 													<span><i class="ti-bell"></i>Notifications <em
 															class="bg-purple">2</em></span>
 												</div>
@@ -718,7 +729,15 @@
 				}
 			}
 
-			const creds = { firstname: e.target.firstname.value, lastname: e.target.lastname.value, email: e.target.email.value, gender: e.target.gender.value, occupation: e.target.occupation.value, interests: interests, dob: e.target.dob.value, country: e.target.country.value, education: e.target.education.value, about: e.target.about.value, location: e.target.location.value, workExperience: e.target.workExperience.value }
+			const socialNetworks = {
+				facebook: e.target.facebookurl.value,
+				instagram: e.target.instagramurl.value,
+				linkedin: e.target.linkedinurl.value,
+				youtube: e.target.youtubeurl.value
+			}
+
+			console.log(e.target.firstname.value);
+			const creds = { firstname: e.target.firstname.value, lastname: e.target.lastname.value, email: e.target.email.value, gender: e.target.gender.value, occupation: e.target.occupation.value, interests: interests, dob: e.target.dob.value, country: e.target.country.value, education: e.target.education.value, about: e.target.about.value, location: e.target.location.value, workExperience: e.target.workExperience.value, socialNetworks, hobbies: e.target.hobbies.value }
 
 			const response = await fetch('http://localhost:3000/api/auth/update', {
 				method: 'PATCH',
@@ -728,7 +747,7 @@
 				body: JSON.stringify(creds)
 			});
 			const json = await response.json();
-			// console.log(json);
+
 			if (json.success) {
 				window.location.replace("http://localhost:3000/viewprofile");
 			}
@@ -746,7 +765,6 @@
 			}
 		}
 
-
 		const fetchdetails = async () => {
 			const response = await fetch('http://localhost:3000/api/auth/getuser', {
 				method: 'POST',
@@ -755,7 +773,25 @@
 				},
 			});
 			const json = await response.json();
-			console.log(json);
+
+			let name = document.getElementById('name')
+			name.innerHTML = json.firstname + ' ' + json.lastname
+
+			let sidename = document.getElementById('sidename')
+			sidename.innerHTML = json.firstname + ' ' + json.lastname
+
+			let sidefollowers = document.getElementById('sidefollowers')
+			sidefollowers.innerHTML = json.followers.length
+
+			let firstname = document.getElementById('firstname')
+			firstname.value = json.firstname
+
+			let lastname = document.getElementById('lastname')
+			lastname.value = json.lastname
+
+			let uppername = document.getElementById('uppername')
+			uppername.innerHTML = json.firstname
+
 			let mail = document.getElementById('email')
 			mail.value = json.email
 			let about = document.getElementById('about')
@@ -772,13 +808,40 @@
 			education.value = json.education
 			let workExperience = document.getElementById('workExperience')
 			workExperience.value = json.workExperience
+			let hobbies = document.getElementById('hobbies')
+			hobbies.value = json.hobbies
 
 			let followers = document.getElementById('followers')
 			followers.innerHTML = json.followers.length
 			let following = document.getElementById('following')
 			following.innerHTML = json.following.length
+
+			let facebookurl = document.getElementById('facebookurl')
+			facebookurl.value = json.socialNetworks.facebook
+			let instagramurl = document.getElementById('instagramurl')
+			instagramurl.value = json.socialNetworks.instagram
+			let linkedinurl = document.getElementById('linkedinurl')
+			linkedinurl.value = json.socialNetworks.linkedin
+			let youtubeurl = document.getElementById('youtubeurl')
+			youtubeurl.value = json.socialNetworks.youtube
 		}
 		fetchdetails()
+
+		const handleSearch = async (e) => {
+			e.preventDefault()
+			const searchinput = document.getElementById('searchinput').value
+			console.log(searchinput);
+			let url = 'http://localhost:3000/api/auth/getuser/name/' + searchinput
+			const user = await fetch(url, {
+				method: 'GET'
+			})
+			const users = await user.json()
+			if (users) {
+				localStorage.setItem('searchResuls', JSON.stringify(users))
+				console.log(users);
+				window.location.replace("http://localhost:3000/users");
+			}
+		}
 	</script>
 
 

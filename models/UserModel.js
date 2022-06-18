@@ -47,19 +47,20 @@ const userSchema = new Schema({
     },
     socialNetworks: {
         facebook: {
-            type: String
+            type: String,
+            default: ''
         },
         instagram: {
-            type: String
+            type: String,
+            default: ''
         },
         linkedin: {
-            type: String
+            type: String,
+            default: ''
         },
         youtube: {
-            type: String
-        },
-        pinterest: {
-            type: String
+            type: String,
+            default: ''
         }
     },
     country: {
@@ -71,11 +72,11 @@ const userSchema = new Schema({
         default: ''
     },
     followers: {
-        type: [mongoose.Schema.Types.ObjectId],
+        type: [String],
         ref: 'users'
     },
     following: {
-        type: [mongoose.Schema.Types.ObjectId],
+        type: [String],
         ref: 'users'
     },
     about: {

@@ -13,12 +13,13 @@ require('dotenv').config();
 // const mongoose = require('mongoose')
 const FacebookStrategy = require('passport-facebook').Strategy
 const GoogleStrategy = require('passport-google-oauth2').Strategy
-const User = require('./models/user.model')
+const User = require('./models/UserModel');
 
 // Routes
 const userRoute = require('./routes/user.route')
 const groupRoute = require('./routes/group.route')
-const postRoute = require('./routes/post.route')
+const postRoute = require('./routes/post.route');
+const { Cookie } = require('express-session');
 
 // const PORT = process.env.PORT
 const DB_URI = process.env.DB_URI
@@ -61,7 +62,6 @@ connectToMongo();
 
 app.use(passport.initialize())
 app.use(passport.session())
-
 
 passport.use(new GoogleStrategy(
 	{
@@ -175,12 +175,43 @@ app.get('/viewprofile', authUser, (req, res) => {
 	return res.redirect('/')
 })
 
+app.get('/user/:id', authUser, async (req, res) => {
+	if (req.user) {
+		res.render('user-profile')
+	}
+	else {
+		req.flash("error", "Please login")
+		res.redirect('/')
+	}
+})
+
 app.get('/', (req, res) => {
+	// if (req.user) {
+	// 	return res.redirect('/usertimeline')
+	// }
+
 	res.render('login')
 })
 
+app.get('/forgotpassword', (req, res) => {
+	res.render('forgot-password')
+})
+// app.get('/resetpassword', (req, res) => {
+// 	res.render('reset-password')
+// })
+
 app.get('/register', (req, res) => {
 	res.render('register')
+})
+
+app.get('/users', authUser, (req, res) => {
+	if (req.user) {
+		return res.render('userSearch',
+			{ user: req.user.data }
+		)
+	}
+	req.flash("error", "Please login")
+	res.redirect('/')
 })
 
 app.get('/dashboard', authUser, (req, res) => {
@@ -190,6 +221,7 @@ app.get('/dashboard', authUser, (req, res) => {
 	req.flash("success", "Please login")
 	return res.redirect('/')
 })
+
 
 app.get('/editprofile', authUser, (req, res) => {
 	if (req.user) {
@@ -202,6 +234,7 @@ app.get('/editprofile', authUser, (req, res) => {
 })
 
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/user', require('./routes/userfollow.route'));
 
 app.listen(port, () => {
 	console.log(`App is listening on port http://localhost:${port}`);

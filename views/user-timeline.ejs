@@ -38,9 +38,9 @@
 			</div>
 			<div class="top-area">
 				<div class="top-search">
-					<form method="post" class="">
-						<input type="text" placeholder="Search Questions, Groups etc">
-						<button data-ripple><i class="ti-search"></i></button>
+					<form>
+						<input type="text" placeholder="Search Questions, Groups etc" id="searchinput">
+						<button data-ripple id="search" onclick="handleSearch(event)"><i class="ti-search"></i></button>
 					</form>
 				</div>
 				<div class="page-name">
@@ -68,10 +68,7 @@
 					</div>
 				</div>
 			</div>
-
 		</div><!-- topbar -->
-
-
 
 
 		<div class="fixed-sidebar left">
@@ -115,12 +112,6 @@
 											</label>
 										</div>
 										<img src="images/resources/profile-image.jpg" alt="">
-										<ul class="profile-controls">
-											<li><a href="#" title="Follow" data-toggle="tooltip"><i
-														class="fa fa-user-plus"></i></a></li>
-											<li><a href="#" title="UnFollow" data-toggle="tooltip"><i
-														class="fa fa-star"></i></a></li>
-										</ul>
 									</figure>
 
 									<div class="profile-section">
@@ -159,8 +150,6 @@
 													<li>
 														<a class="" href="user-groups.html">Groups</a>
 													</li>
-
-
 												</ul>
 												<ol class="folw-detail">
 													<li><span>Posts</span><ins>101</ins></li>
@@ -249,7 +238,6 @@
 														</div>
 														<div class="we-video-info">
 															<ul>
-
 																<li>
 																	<div class="likes heart" title="Like/Dislike">❤
 																		<span>2K</span>
@@ -261,10 +249,7 @@
 																		<ins>2</ins>
 																	</span>
 																</li>
-
-
 															</ul>
-
 														</div>
 													</div>
 													<div class="coment-area">
@@ -281,12 +266,10 @@
 																	</p>
 																	<div class="inline-itms">
 																		<span>1 day ago</span>
-
 																		<a href="#" title=""><i
 																				class="fa fa-heart"></i><span>20</span></a>
 																	</div>
 																</div>
-
 															</li>
 															<li>
 																<div class="comet-avatar">
@@ -542,12 +525,11 @@
 			const response = await fetch('http://localhost:3000/api/post/getposts', {
 				method: 'GET'
 			})
-			// console.log('<%=user._id %>');
 			const json = await response.json()
 			let posttimeline = document.getElementById('posttimeline')
 			let html = '';
 
-
+			json.reverse()
 			json.forEach((post) => {
 				let getUser = async () => {
 					let url = 'http://localhost:3000/api/auth/getuser/' + post.author
@@ -591,10 +573,10 @@
 																<li>
 																	<div class="likes heart" title="Like/Dislike">❤
 																		<span>${post.likes.length}</span>
-																		</div>
-																		</li>
-																		<li>
-																			<span class="comment" title="Comments">
+																	</div>
+																</li>
+																<li>
+																	<span class="comment" title="Comments">
 																		<i class="fa fa-commenting"></i>
 																		<ins>2</ins>
 																	</span>
@@ -605,20 +587,22 @@
 														<div class="coment-area">
 															<ul class="we-comet">
 																<li>
-																	<div class="comet-avatar">
-																		<img src="images/resources/hobo.jpg" alt="">
-																		</div>
-																		<div class="we-comment">
-																			<h5><a href="timeline.html" title="">James T
-																				Kirk</a></h5>
-																				<p>It's RDJ!</p>
-																				<div class="inline-itms">
-																					<span>1 minute ago</span>
-																					<a href="#" title=""><i
-																						class="fa fa-heart"></i><span>20</span></a>
-																						</div>
+																<div class="comet-avatar">
+																	<img src="images/resources/hobo.jpg" alt="">
 																</div>
-																</li>
+																<div class="we-comment">
+																	<h5><a href="timeline.html" title="">James T
+																			Kirk</a></h5>
+																	<p>They need to be able to think on their feet and
+																		be able to work with a team to get the job done
+																	</p>
+																	<div class="inline-itms">
+																		<span>1 day ago</span>
+																		<a href="#" title=""><i
+																				class="fa fa-heart"></i><span>20</span></a>
+																	</div>
+																</div>
+															</li>
 																<li>
 																	<div class="comet-avatar">
 																		<img src="images/resources/hobo.jpg" alt="">
@@ -775,7 +759,24 @@
 			posttimeline.innerHTML = html
 		}
 		fetchPosts()
+
+		const handleSearch = async (e) => {
+			e.preventDefault()
+			const searchinput = document.getElementById('searchinput').value
+			console.log(searchinput);
+			let url = 'http://localhost:3000/api/auth/getuser/name/' + searchinput
+			const user = await fetch(url, {
+				method: 'GET'
+			})
+			const users = await user.json()
+			if (users) {
+				localStorage.setItem('searchResuls', JSON.stringify(users))
+				console.log(users);
+				window.location.replace("http://localhost:3000/users");
+			}
+		}
 	</script>
+
 	<script src="js/main.min.js"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8c55_YHLvDHGACkQscgbGLtLRdxBDCfI"></script>
 	<script src="js/locationpicker.jquery.js"></script>

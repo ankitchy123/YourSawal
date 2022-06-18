@@ -64,9 +64,9 @@ const getPosts = async (req, res) => {
 		res.json({ error: "Something went wrong.", })
 	}
 }
+
 // Like a post from post_id, Required authentication
 const likePost = async (req, res) => {
-
 	// Get required fields from request
 	const user_id = req.user._id
 	const { id: post_id } = req.params

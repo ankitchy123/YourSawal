@@ -19,7 +19,7 @@ const oauth2Client = new OAuth2(
 )
 
 // Send Mail
-const sendEmail = (to, url) => {
+const sendEmail = (to, url, txt1, txt2) => {
     oauth2Client.setCredentials({
         refresh_token: MAILING_SERVICE_REFRESH_TOKEN
     })
@@ -40,22 +40,17 @@ const sendEmail = (to, url) => {
     const mailOptions = {
         from: SENDER_EMAIL_ADDRESS,
         to: to,
-        subject: "Verify email address",
+        subject: txt2,
         html: `
             <div style="max-width: 700px; margin:auto; border: 10px solid #ddd; padding: 50px 20px; font-size: 110%;">
-            <h2 style="text-align: center; text-transform: uppercase;color: teal;">Welcome to the Origin Cloud.</h2>
-            <p>Just click the button below to validate your email address.</p>
-            <a href=${url} style="background: crimson; text-decoration: none; color: white; padding: 10px 20px; margin: 10px 0; display: inline-block;">Verify</a>
+            <h2 style="text-align: center; text-transform: uppercase;color: teal;">Welcome to the Your Sawaal.</h2>
+            <p>${txt1}</p>
+            <a href=${url} style="background: crimson; text-decoration: none; color: white; padding: 10px 20px; margin: 10px 0; display: inline-block;">${txt2}</a>
             </div>`
-
-        // <p>If the button doesn't work for any reason, you can also click on the link below:</p>
-        // <div> ${url}</div>
     }
 
     smtpTransport.sendMail(mailOptions, (err, data) => {
         if (err) {
-            // console.log(err);
-            console.log(data);
             return err;
         }
         return data

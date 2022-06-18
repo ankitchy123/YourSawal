@@ -8,7 +8,6 @@
 	<meta name="keywords" content="" />
 	<title>Your Sawaal :: Sailendra Damaraju</title>
 	<link rel="icon" href="images/logo.jpg" type="image/png" sizes="16x16">
-
 	<link rel="stylesheet" href="css/main.min.css">
 	<link rel="stylesheet" href="css/style.css">
 	<link rel="stylesheet" href="css/color.css">
@@ -41,8 +40,8 @@
 
 				<div class="top-search">
 					<form method="post" class="">
-						<input type="text" placeholder="Search Questions, Groups etc">
-						<button data-ripple><i class="ti-search"></i></button>
+						<input type="text" placeholder="Search Questions, Groups etc" id="searchinput">
+						<button data-ripple id="search" onclick="handleSearch(event)"><i class="ti-search"></i></button>
 					</form>
 				</div>
 				<div class="page-name">
@@ -57,9 +56,8 @@
 
 				</ul>
 				<div class="user-img">
-					<h5>
-						<%=user.firstname%>
-							<%=user.lastname%>
+					<h5 id="name">
+
 					</h5>
 					<img src="images/resources/company1.png" alt="">
 					<div class="user-setting">
@@ -102,7 +100,6 @@
 			</div>
 		</div><!-- left sidebar menu -->
 
-
 		<section>
 			<div class="gap2 gray-bg">
 				<div class="container">
@@ -118,12 +115,6 @@
 											</label>
 										</div>
 										<img src="images/resources/profile-image.jpg" alt="">
-										<ul class="profile-controls">
-											<li><a href="#" title="Follow" data-toggle="tooltip"><i
-														class="fa fa-user-plus"></i></a></li>
-											<li><a href="#" title="UnFollow" data-toggle="tooltip"><i
-														class="fa fa-star"></i></a></li>
-										</ul>
 									</figure>
 
 									<div class="profile-section">
@@ -141,8 +132,8 @@
 													</div>
 
 													<div class="author-content">
-														<a class="h4 author-name" href="about.html">
-															<%=user.firstname%>
+														<a class="h4 author-name" href="about.html" id="firstname">
+
 														</a>
 														<div class="country" id="location"></div>
 													</div>
@@ -204,12 +195,6 @@
 												<p id="joined">
 													April 20, 2021
 												</p>
-
-												<span class="f-title"><i class="fa fav-play"></i> Website:</span>
-												<p>
-													<a href="https://stacknation.org">https://stacknation.org</a>
-												</p>
-
 											</div>
 										</div>
 									</aside>
@@ -220,8 +205,8 @@
 										<div class="row">
 											<div class="col-lg-6">
 												<div class="gen-metabox">
-													<span><i class="fa fa-puzzle-piece"></i> Hobbies</span>
-													<p>
+													<span><i class="fa fa-puzzle-piece"></i>Hobbies</span>
+													<p id="hobbies">
 														I like reading magazines, and searching on internet, and also
 														binge watching a good hollywood Movies.
 													</p>
@@ -249,17 +234,8 @@
 											<div class="col-lg-6">
 												<div class="gen-metabox no-margin">
 													<span><i class="fa fa-sitemap"></i> Social Networks</span>
-													<ul class="sociaz-media">
-														<li><a class="facebook" href="#" title=""><i
-																	class="fa fa-facebook"></i></a></li>
-														<li><a class="twitter" href="#" title=""><i
-																	class="fa fa-twitter"></i></a></li>
-														<li><a class="google" href="#" title=""><i
-																	class="fa fa-google-plus"></i></a></li>
-														<li><a class="vk" href="#" title=""><i
-																	class="fa fa-youtube"></i></a></li>
-														<li><a class="instagram" href="#" title=""><i
-																	class="fa fa-instagram"></i></a></li>
+													<ul class="sociaz-media" id="socialmedia">
+
 													</ul>
 												</div>
 											</div>
@@ -309,7 +285,12 @@
 				},
 			});
 			const json = await response.json();
-			console.log(json);
+
+			let name = document.getElementById('name')
+			name.innerHTML = json.firstname + ' ' + json.lastname
+
+			let firstname = document.getElementById('firstname')
+			firstname.innerHTML = json.firstname
 
 			document.title = "Your Sawaal :: " + json.firstname + " " + json.lastname;
 			let mail = document.getElementById('email')
@@ -329,6 +310,9 @@
 			let about = document.getElementById('about')
 			about.innerHTML = json.about
 
+			let hobbies = document.getElementById('hobbies')
+			hobbies.innerHTML = json.hobbies
+
 			let dob = document.getElementById('dob')
 			const dobDate = new Date(json.dob);
 			dob.innerHTML = dobDate.toLocaleString('default', { month: 'short' }) + ", " + dobDate.getDate() + " " + dobDate.getFullYear()
@@ -342,8 +326,34 @@
 
 			let following = document.getElementById('following')
 			following.innerHTML = json.following.length
+
+			let socialmedia = document.getElementById('socialmedia')
+
+			let html = ''
+			html += `<li><a class="facebook" href="${json.socialNetworks.facebook}" target="_blank"><i class="fa fa-facebook"></i></a></li>`
+			html += `<li><a class="instagram" href="${json.socialNetworks.instagram}" target="_blank"><i class="fa fa-instagram"></i></a></li>`
+			html += `<li><a class="linkedin" href="${json.socialNetworks.linkedin}" target="_blank"><i class="fa fa-linkedin"></i></a></li>`
+			html += `<li><a class="youtube" href="${json.socialNetworks.youtube}" target="_blank"><i class="fa fa-youtube"></i></a></li> `
+
+			socialmedia.innerHTML = html
 		}
 		fetchdetails()
+
+		const handleSearch = async (e) => {
+			e.preventDefault()
+			const searchinput = document.getElementById('searchinput').value
+			console.log(searchinput);
+			let url = 'http://localhost:3000/api/auth/getuser/name/' + searchinput
+			const user = await fetch(url, {
+				method: 'GET'
+			})
+			const users = await user.json()
+			if (users) {
+				localStorage.setItem('searchResuls', JSON.stringify(users))
+				console.log(users);
+				window.location.replace("http://localhost:3000/users");
+			}
+		}
 	</script>
 
 	<script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
